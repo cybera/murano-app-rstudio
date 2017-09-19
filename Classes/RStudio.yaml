@@ -1,0 +1,63 @@
+Namespaces:
+  =: ca.cybera
+  conf: io.murano.configuration
+  res: io.murano.resources
+  std: io.murano
+  sys: io.murano.system
+
+Name: RStudio
+Extends: std:Application
+
+Properties:
+  name:
+    Contract: $.string().notNull()
+  instance:
+    Contract: $.class(res:LinuxMuranoInstance).notNull()
+  password:
+    Contract: $.string().notNull()
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+  deploy:
+    Body:
+      - If: not $.getAttr(deployed, false)
+        Then:
+          # Create Security Group
+          - $._environment.reporter.report($this, 'Creating security group for RStudio')
+          - $securityGroupIngress:
+            - ToPort: 80
+              FromPort: 80
+              IpProtocol: tcp
+              External: true
+            - ToPort: 80
+              FromPort: 80
+              IpProtocol: tcp
+              Ethertype: IPv6
+              External: true
+          - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+
+          # Launch the instance
+          - $._environment.reporter.report($this, 'Creating instance for RStudio')
+          - $.instance.deploy()
+
+          # Deploy RStudio
+          - $._environment.reporter.report($this, 'Deploying RStudio')
+          - $replacements:
+              "%PASSWORD%": $.password
+          - $file: sys:Resources.string('deployRStudio.sh').replace($replacements)
+          - conf:Linux.runCommand($.instance.agent, $file)
+          - $._environment.reporter.report($this, 'RStudio is installed.')
+
+          - If: $.instance.assignFloatingIp
+            Then:
+              - $address: $.instance.floatingIpAddress
+            Else:
+              - $address: $.instance.ipAddresses.selectMany(
+                  switch(
+                    $.matches("[a-f]+") => format('[{0}]', $),
+                    true => $
+                  )).select(format('http://{0}', $)).join(', ')
+          - $._environment.reporter.report($this, 'RStudio is available at {0}'.format($address))

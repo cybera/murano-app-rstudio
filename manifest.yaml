@@ -1,0 +1,12 @@
+Format: 1.3
+Type: Application
+FullName: ca.cybera.RStudio
+Name: RStudio
+Description: |
+  R-Studio is an integrated development environment (IDE) for R.
+Author: 'Cybera Inc'
+Tags:
+  - Big Data
+  - Data Science
+Classes:
+  ca.cybera.RStudio: RStudio.yaml
