@@ -6,6 +6,12 @@ Templates:
         type: io.murano.resources.ExistingNeutronNetwork
       internalNetworkName: $.instanceConfiguration.network[0]
       internalSubnetworkName: $.instanceConfiguration.network[1]
+  customVolumeAttachment:
+      '/dev/vdd':
+        ?:
+          type: io.murano.resources.ExistingCinderVolume
+        openstackId: $.instanceConfiguration.volume
+
 
 Application:
   ?:
@@ -25,11 +31,7 @@ Application:
       useEnvironmentNetwork: $.instanceConfiguration.network[0]=null
       useFlatNetwork: false
       customNetworks: switch($.instanceConfiguration.network[0], $=null=>list(), $!=null=>$customJoinNet)
-    volumes:
-      '/dev/vdd':
-        ?:
-          type: io.murano.resources.ExistingCinderVolume
-        openstackId: $.instanceConfiguration.volume
+    volumes: switch($.instanceConfiguration.volume, $=''=>null, $!=null=>$customVolumeAttachment)
 
 Forms:
   - appConfiguration:
