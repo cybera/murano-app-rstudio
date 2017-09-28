@@ -34,28 +34,6 @@ Application:
     volumes: switch($.instanceConfiguration.volume, $=''=>null, $!=null=>$customVolumeAttachment)
 
 Forms:
-  - appConfiguration:
-      fields:
-        - name: title
-          type: string
-          required: false
-          hidden: true
-          description: >-
-            Application Configuration
-        - name: name
-          type: string
-          label: Application Name
-          initial: RStudio
-          description: >-
-            Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
-            underline are allowed
-        - name: password
-          type: password
-          label: Password
-          description: >-
-            Please provide a password for RStudio
-          helpText: >-
-            Password must be between 5 and 100 characters long.
   - instanceConfiguration:
       fields:
         - name: title
@@ -99,6 +77,15 @@ Forms:
           required: true
           murano_networks: translate
           allow_auto: false
+        - name: assignFloatingIP
+          type: boolean
+          label: Assign Floating IP
+          description: >-
+             Select to true to assign floating IP automatically
+          initial: false
+          required: false
+          widgetMedia:
+            css: {all: ['muranodashboard/css/checkbox.css']}
         - name: unitNamingPattern
           type: string
           label: Instance Naming Pattern
@@ -111,12 +98,25 @@ Forms:
           description: >-
             Specify a string, that will be used in instance hostname.
             Just A-Z, a-z, 0-9, dash and underline are allowed.
-        - name: assignFloatingIP
-          type: boolean
-          label: Assign Floating IP
-          description: >-
-             Select to true to assign floating IP automatically
-          initial: false
+  - appConfiguration:
+      fields:
+        - name: title
+          type: string
           required: false
-          widgetMedia:
-            css: {all: ['muranodashboard/css/checkbox.css']}
+          hidden: true
+          description: >-
+            Application Configuration
+        - name: name
+          type: string
+          label: Application Name
+          initial: RStudio
+          description: >-
+            Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
+            underline are allowed
+        - name: password
+          type: password
+          label: Password
+          description: >-
+            Please provide a password for RStudio
+          helpText: >-
+            Password must be between 5 and 100 characters long.
