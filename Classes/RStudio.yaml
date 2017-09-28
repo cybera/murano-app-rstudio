@@ -61,3 +61,4 @@ Methods:
                     true => $
                   )).select(format('http://{0}', $)).join(', ')
           - $._environment.reporter.report($this, 'RStudio is available at {0}'.format($address))
+          - $.setAttr(deployed, true)
