@@ -53,7 +53,7 @@ Methods:
 
           - If: $.instance.assignFloatingIp
             Then:
-              - $address: $.instance.floatingIpAddress
+              - $address: format('http://{0}', $.instance.floatingIpAddress)
             Else:
               - $address: $.instance.ipAddresses.selectMany(
                   switch(
